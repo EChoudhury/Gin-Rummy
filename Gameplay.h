@@ -2,6 +2,7 @@
 #define	GAMEPLAY_H
 
 #include "Card.h"
+#include "ScoreKeeper.h"
 #include <iostream>
 #include <vector>
 #include <stack>
@@ -9,8 +10,12 @@
 
 using namespace std;
 
+void displayDeck(stack<Card> d);
 void displayBoard(vector<Card>& h);
-void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard);
+void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, bool& end, ScoreKeeper& pScore);
 int input(bool v, string s, int max, int min);
+void compTurn(vector<Card>& comp, stack<Card>& draw, stack<Card>& discard, bool& end, ScoreKeeper& cScore);
+void roundStart(vector<Card>& comp, vector<Card>& player, stack<Card>& discard);
+void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win);
 
 #endif
