@@ -17,6 +17,8 @@ int ScoreKeeper::getDeadwood() { return deadwood; }
 
 void ScoreKeeper::getPlayerHand(vector<Card> h) { playerHand = h; }
 
+int ScoreKeeper::getWins() { return wins; }
+
 void ScoreKeeper::updateScore(int score) { totalScore += score; }
 
 void ScoreKeeper::updateWins() { wins++; }

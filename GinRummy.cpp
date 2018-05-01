@@ -14,38 +14,57 @@ using namespace std;
 
 int main() {
 
+//** Initial Game Setup *********************************************************************
+
 	system("clear");
 
+	//random seed
 	srand(time(0));
 
+	//create deck in order to shuffle
 	vector<Card> deck;
 
+	//create four card locations
 	stack<Card> draw;
 	stack<Card> discard;
 	vector<Card> playerHand;
 	vector<Card> compHand;
 
+	//create and shuffle a new deck of cards
 	createDeck(draw, deck);
-	
-	//********************************************
 
+	//deal cards
 	dealToHands(10, playerHand, draw);
 	dealToHands(10, compHand, draw);
 	dealToDiscard(1, discard, draw);
-
-	//cout << draw.size() << " " << playerHand.size() << " " << compHand.size() <<  " " << discard.size() << endl;
 	
-	//********************************************
+//** Establish Variables *********************************************************************
 	
+	//create two score-keepers
 	ScoreKeeper pScore;
 	ScoreKeeper cScore;
 
+	//has the game ended?
 	bool end = false;
+
+	//is the input valid?
 	bool valid = false;
+
+	//store turn and round number
 	int turn = 1;
 	int round = 1;
+
+	//store type of win (6-Knock,5-Gin,10-NoWin,7-BigGin)
 	int winType;
+
+	//used to start game after instructions
 	int begin;
+
+	//store bonus values after game
+	int playerBonusPoints;
+	int compBonusPoints;
+
+//** Intro Screen ****************************************************************************
 
 cout << "Welcome to" << endl << endl;                                                                                                      
 cout << "  ,ad8888ba,  88                88888888ba                                                               " << endl;
@@ -70,7 +89,8 @@ cout << "   Erich, Thomas, and Grant                                            
 
 	if (begin == 2) {  
 		system("clear");
-		cout << "This is how to play!" << endl;
+		//display rules
+		howToPlay();
 		cout << "Press ENTER to play!" << endl;
 		cin.clear();
 		cin.ignore();
@@ -81,12 +101,15 @@ cout << "   Erich, Thomas, and Grant                                            
 	
 	system("clear");
 
-	while (pScore.getScore() < 100 && cScore.getScore() < 100) {
+//** Playing the Game **********************************************************************
 
+	while (pScore.getScore() < 100 && cScore.getScore() < 100) {
+		
 		winType = 0;
 
 		cout << "ROUND " << round << endl;
 
+		//end is not returned and draw piles still has cards
 		while (end == false && draw.size() != 0) {
 
 			cout << "Turn: " << turn << endl << endl;		
@@ -130,9 +153,9 @@ cout << "   Erich, Thomas, and Grant                                            
 
 		else {
 						
-			cout << "Draw Pile is Empty!" << endl;
+			cout << "Draw Pile is Empty! It's a tie!" << endl;
 			//Computer Win
-			if (cScore.getDeadwood() < pScore.getDeadwood()) {
+			/*if (cScore.getDeadwood() < pScore.getDeadwood()) {
 				cout << "COMPUTER WINS ROUND " << round	<< endl;			
 				cScore.updateScore(pScore.getDeadwood() - cScore.getDeadwood());
 				cScore.updateWins();
@@ -143,14 +166,15 @@ cout << "   Erich, Thomas, and Grant                                            
 				cout << "PLAYER WINS ROUND " << round << endl;
 				pScore.updateScore(cScore.getDeadwood() - pScore.getDeadwood());
 				pScore.updateWins();
-			}
+			}*/
 
 		}
 
+		//End of round stats
 		cout << "Player Deadwood: " << pScore.getDeadwood() << " Computer Deadwood: " << cScore.getDeadwood() 				<< endl;
+		cout << "Total Scores:" << " Player - " <<pScore.getScore() << ", Computer - " << cScore.getScore() << endl;
+		cout << "Number of Wins:" << "Player - " << pScore.getWins() << ", Computer - " << cScore.getWins() << endl;
 
-		cout << "Total Scores " << ": Player - " <<pScore.getScore() << ", Computer - " << cScore.getScore() << endl;
-		
 		cout << "Press ENTER to continue!" << endl;
 		cin.clear();
 		cin.ignore();
@@ -160,6 +184,7 @@ cout << "   Erich, Thomas, and Grant                                            
 		
 		system("clear");
 
+		//reset decks and redeal cards for the next round
 		reset(deck, draw, discard, playerHand, compHand);
 		dealToHands(10, playerHand, draw);
 		dealToHands(10, compHand, draw);
@@ -171,9 +196,59 @@ cout << "   Erich, Thomas, and Grant                                            
 
 	cout << "Game Over!" << endl;
 
-	cout << draw.size() << " " << playerHand.size() << " " << compHand.size() <<  " " << discard.size() << endl;
+//** Win Bonus Points ***********************************************************************
 	
-	cout << endl;
+	//give 100 points to the winner
+	if (pScore.getScore() > cScore.getScore()) {
+		cout << "Player WON! +100" << endl;
+		pScore.updateScore(100);
+	}
+	else if (cScore.getScore() > cScore.getScore()) {
+		cout << "Computer WON! +100" << endl;
+		cScore.updateScore(100);
+	}
+	else {
+		cout << "It is a TIE!" << endl;
+	}
+	
+//** No Wins Bonus Points *******************************************************************
+
+	//Double computer's score if player had no wins
+	if (pScore.getWins() == 0) {
+		cout << "Player got ZERO wins, Computer's points DOUBLED!" << endl;
+		cScore.updateScore(cScore.getScore());
+	}
+
+	//Double player's score if computer had now wins
+	if (cScore.getWins() == 0) {
+		cout << "Computer got ZERO wins, Player's points DOUBLED!" << endl;
+		pScore.updateScore(pScore.getScore());
+	}
+
+//** Hand Wins Bonus Points *****************************************************************
+
+	//Give 25 points extra for each hand won
+	cout << "+25 points to each player per hand won!" << endl;
+	
+	playerBonusPoints = 25 * pScore.getWins();
+	cout << "Player won " << pScore.getWins() << " rounds! +" << playerBonusPoints << " points!" << endl;
+	pScore.updateScore(playerBonusPoints);
+
+	compBonusPoints = 25 * cScore.getWins();
+	cout << "Computer won " << cScore.getWins() << " rounds! +" << compBonusPoints << " points!" << endl;
+	cScore.updateScore(compBonusPoints);
+	
+//** Display Winner ************************************************************************
+
+	//display winner and total points
+	if (pScore.getScore() > cScore.getScore()) {
+		cout << "Player WON the game with " << pScore.getScore() << " points!" << endl;
+	}
+
+	if (cScore.getScore() < cScore.getScore()) {
+		cout << "Computer WON the game!"  << cScore.getScore() << " points!" << endl;
+	}
+	
 
 return 0;
 }

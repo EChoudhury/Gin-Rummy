@@ -10,6 +10,7 @@
 
 using namespace std;
 
+//create arrays for each of the different ways to identify the cards
 string names[] = {"Ace", "Two", "Three", "Four", "Five",
  "Six", "Seven", "Eight", "Nine", "Ten", "Jack", "Queen", "King"};
 
@@ -18,10 +19,14 @@ string suits[] = {"Spades", "Hearts", "Clubs", "Diamonds"};
 string abrevNames[] = {"A","2","3","4","5","6","7","8","9","10","J","Q","K"};
 char abrevSuits[] = {'S','H','C','D'};
 
+//Displays Draw and Discard Deck Piles
 void displayDeck(stack<Card> d) {
+
+	//get the suit and number from the card on top of the discard stack
 	int dnum = d.top().getNumber();
 	int dsuit = d.top().getSuit();
 
+	//display draw and discard piles
 	cout << "  ?---?\t\t\t\t\t\t\t\t   " << abrevNames[dnum-1] << "---" << abrevSuits[dsuit-1]<< "\t" << endl;
 	cout << "  |   |\t\t\t\t\t\t\t\t   |" << "   " << "|" << "\t" << endl;
 	cout << "  |   |\t\t\t\t\t\t\t\t   |" << "   " << "|" << "\t" << endl;
@@ -30,7 +35,16 @@ void displayDeck(stack<Card> d) {
 	cout << "Draw Pile\t\t\t\t\t\t\tDiscard Pile" << endl;
 }
 
+//displays the player hand
 void displayBoard(vector<Card>& h) {	
+
+	//display cards in this format (S = suit, # = number):
+	//  #---S
+	//  |   |	
+	//  |   |
+	//  |   |
+	//  S---#
+
 
 	cout << endl;
 
@@ -88,6 +102,7 @@ void displayBoard(vector<Card>& h) {
 	cout << endl;
 }
 
+//Used for all input (Securely takes in data), returns int value
 int input(bool v, string s, int max, int min) {
 	
 	int choice;
@@ -113,12 +128,15 @@ int input(bool v, string s, int max, int min) {
 	return choice;
 }
 
+
 void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, bool& end, ScoreKeeper& pScore) {
+	
 	bool valid = false;
 	int choice;
+
 	string selectDrawSort = "Select from the draw pile (1) or discard pile (2)! Press (3) to sort! (1-3)\n>";
 	string selectDraw = "Select from the draw pile (1) or discard pile (2)!\n";
-	string selectKnock = "Select from the draw pile (1) or discard pile (2)! Press (0) to knock!\n";
+	string selectKnock = "Continue to select a card to discard (1) or press (0) to knock! (0/1)\n";
 	string selectDiscard = "Select card to discard! (1-11)\n>";
 	
 	displayDeck(discard);
@@ -126,6 +144,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 	
 	choice = input(valid, selectDrawSort, 3, 1);
 
+		//sort the player hand
 		while (choice == 3) {
 			system("clear");
 			sort(player.begin(), player.end());
@@ -134,6 +153,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 			choice = input(valid, selectDraw, 2, 1);
 		}
 
+		//take a card from draw
 		if (choice == 1) {
 			system("clear");
 			dealToHands(1, player, draw);
@@ -141,12 +161,12 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 			displayBoard(player);
 			pScore.getPlayerHand(player);
 			pScore.scoreHand(player);
-			cout <<"Your deadwood value is " << pScore.getDeadwood() << " and you have " << 					pScore.getMelds() << " melds." << endl;
+			cout <<"Your deadwood value is " << pScore.getDeadwood() << " and you have " << pScore.getMelds() << " melds." << endl;
 
 			choice = pScore.checkWin();
 			
 			if (choice == 6) {
-				choice = input(valid, selectKnock, 2, 0);
+				choice = input(valid, selectKnock, 1, 0);
 				if (choice == 0) {
 					end = true;
 					goto loc;
@@ -158,6 +178,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 				goto loc;
 			}
 
+			//choose a card to discard
 			choice = input(valid, selectDiscard, 11, 1);
 	
 			choice -= 1;
@@ -168,6 +189,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 			displayBoard(player);
 		}
 		
+		//take a card from discard
 		else {
 			system("clear");
 			dealToHands(1, player, discard);
@@ -177,21 +199,25 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 			pScore.scoreHand(player);
 			cout <<"Your deadwood value is " << pScore.getDeadwood() << " and you have " << 					pScore.getMelds() << " melds." << endl;
 
+			//Check win
 			choice = pScore.checkWin();
-
+		
+			//If returns knock
 			if (choice == 6) {
-				choice = input(valid, selectKnock, 2, 0);
+				choice = input(valid, selectKnock, 1, 0);
 				if (choice == 0) {
 					end = true;
 					goto loc;
 				}
 			}
 
+			//If returns Gin or Big Gin
 			if (choice == 5 || choice == 7) {
 				end = true;				
 				goto loc;
 			}
 
+			//choose a care to discard
 			choice = input(valid, selectDiscard, 11, 1);
 
 			choice -= 1;
@@ -206,7 +232,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 	cout << endl;
 }
 
-
+//Computer turn
 void compTurn(vector<Card>& comp, stack<Card>& draw, stack<Card>& discard, bool& end, ScoreKeeper& cScore) {
 
 	int choice;
@@ -275,13 +301,17 @@ void compTurn(vector<Card>& comp, stack<Card>& draw, stack<Card>& discard, bool&
 void roundStart(vector<Card>& comp, vector<Card>& player, stack<Card>& discard) {
 		
 		bool valid = false;
+
 		string discPass = "Would you like to draw from discard (1) or pass (2)? (1/2)\n>";
 		string selectDiscard = "Select card to discard! (1-11)\n>";
+
 		displayDeck(discard);
 		displayBoard(player);
+
 		int choice = input(valid, discPass, 2, 1);
 			
 			if (choice == 1) {
+				system("clear");
 				dealToHands(1, player, discard);
 				displayBoard(player);
 				choice = input(valid, selectDiscard, 11, 1);
@@ -314,7 +344,7 @@ void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win) {
 	
 	//gin
 	if (win == 5) {
-		cout << "GIN! +25!" << endl;
+		cout << "GOING GIN! +25!" << endl;
 		wScore.updateScore(( lScore.getDeadwood() - wScore.getDeadwood()) + 25);
 	}
 
@@ -322,13 +352,13 @@ void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win) {
 	else if (win == 6) {
 
 		if (wScore.getDeadwood() < lScore.getDeadwood()) {
-			cout << "Knocked! +25!" << endl;
-			wScore.updateScore((lScore.getDeadwood() - wScore.getDeadwood()) + 25);
+			cout << "Knocked!" << endl;
+			wScore.updateScore((lScore.getDeadwood() - wScore.getDeadwood()));
 		}
 
 		else if (wScore.getDeadwood() >= lScore.getDeadwood()) {
-			cout << "Knock Failed!" << endl;
-			lScore.updateScore(wScore.getDeadwood() - lScore.getDeadwood());
+			cout << "UNDERCUT! Opponent gets 25 points!" << endl;
+			lScore.updateScore(wScore.getDeadwood() - lScore.getDeadwood() + 25);
 		}
 	}
 
@@ -337,5 +367,17 @@ void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win) {
 		cout << "BIG GIN! +31!" << endl;
 		wScore.updateScore(( lScore.getDeadwood() - wScore.getDeadwood()) + 31);
 	}
+}
+
+void howToPlay() {
+
+cout << "How to play:" << endl << endl;
+
+cout << "Melds- A meld is a combination of three cards.  Those three cards can either be cards of the same face value or cards that make a run in the same suit.  For example, a three of hearts followed by a four and five of hearts is a meld, but if one of those cards were a different suit it would not count.  Additionally, an ace takes a value of one, so an ace two and three of the same suit is a run but a queen king ace of the same suit is not." << endl << endl;
+
+cout << "Gameplay- Gin Rummy is played with two players.  The game is played with one deck of cards and there is a draw and discard pile, the draw pile being face down and the discard being face up.  Each player begins the game with 10 cards.  For the first turn, the first player can either take the first card from the discard pile or pass.  Every other turn after the first includes the player choosing to draw from either the draw or discard pile. That player must then discard a card into the discard pile.  The round ends either when the deck is out of cards (a tie) or if a player knocks.  A knock is when a player has at least three melds.  Any card that is not included in the melds is considered deadwood, and the players deadwood value is a total of all the face values of any card not in a meld." << endl << endl;
+
+cout << "Scoring- When a player knocks, the deadwood value for each player is calculated and if the knocking player has less he receives the difference in deadwood as points.  If the other player has less they receive the difference in deadwood value in points, but also an undercut bonus of 25 points.  If a player knocks with 0 deadwood, that is a gin and they get 25 bonus points on top of the regular scoring.  If a player is able to include all 11 cards, that is a big gin and they receive 31 bonus points on top of the regular scoring.  The game continues until a player reaches 100 points." << endl << endl;
+
 }
 

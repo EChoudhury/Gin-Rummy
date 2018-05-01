@@ -22,7 +22,7 @@ void createDeck(stack<Card>& s, vector<Card>& d) {
 	}
 }
 
-//Move specific number of cards from draw to hands
+//Move specific number of cards from stack to vector
 void dealToHands(int num, vector<Card>& target, stack<Card>& sender) {
 	if (sender.size() == 0) {
 		cout << "Error" << endl;
@@ -37,7 +37,7 @@ void dealToHands(int num, vector<Card>& target, stack<Card>& sender) {
 
 }
 
-//Move specific number of cards from hands to draw
+//Move specific number of cards from vector to stack
 void sendToDraw(stack<Card>& target, vector<Card>& sender) {
 	if (sender.size() == 0) {
 		cout << "Error" << endl;
@@ -53,7 +53,7 @@ void sendToDraw(stack<Card>& target, vector<Card>& sender) {
 }
 
 
-//Move specific number of cards from draw <---> discard
+//Move specific number of cards from stack <---> stack
 void dealToDiscard(int num, stack<Card>& target, stack<Card>& sender) {
 	if (sender.size() == 0) {
 		cout << "Error" << endl;

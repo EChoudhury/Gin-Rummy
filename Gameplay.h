@@ -17,5 +17,6 @@ int input(bool v, string s, int max, int min);
 void compTurn(vector<Card>& comp, stack<Card>& draw, stack<Card>& discard, bool& end, ScoreKeeper& cScore);
 void roundStart(vector<Card>& comp, vector<Card>& player, stack<Card>& discard);
 void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win);
+void howToPlay();
 
 #endif

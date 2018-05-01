@@ -27,6 +27,7 @@ void updateWins();
 int getScore();
 int getPlayerScore();
 int getDeadwood();
+int getWins();
 int checkWin();
 void getPlayerHand(vector<Card> h);
 int scoreHand(vector<Card> h);
