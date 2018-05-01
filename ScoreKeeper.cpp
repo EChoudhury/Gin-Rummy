@@ -1,3 +1,11 @@
+/************************
+Erich Choudhury
+Thomas Daughtridge
+Grant Caskey
+ECGR 2104
+April 30, 2018
+ScoreKeeper.cpp
+************************/
 
 #include "Card.h"
 #include "ScoreKeeper.h"
@@ -15,7 +23,7 @@ int ScoreKeeper::getPlayerScore() { return playerscore; }
 
 int ScoreKeeper::getDeadwood() { return deadwood; }
 
-void ScoreKeeper::getPlayerHand(vector<Card> h) { playerHand = h; }
+void ScoreKeeper::getPlayerHand(vector<Card> h) { playerHand = h; } //takes in a vector
 
 int ScoreKeeper::getWins() { return wins; }
 
@@ -23,12 +31,12 @@ void ScoreKeeper::updateScore(int score) { totalScore += score; }
 
 void ScoreKeeper::updateWins() { wins++; }
 
-int ScoreKeeper::getScore() { return totalScore; }
+int ScoreKeeper::getScore() { return totalScore; } 
 
 int ScoreKeeper::checkWin() {
 	
 	//gin
-	if (deadwood == 0 && playerHand.size() == 10) {
+	if (deadwoodSize == 1) {
 		return 5;
 	}
 	
@@ -38,7 +46,7 @@ int ScoreKeeper::checkWin() {
 	}	
 
 	//big gin
-	else if (deadwood == 0 && playerHand.size() == 11) {
+	else if (deadwoodSize == 0) {
 		return 7;
 	}
 
@@ -46,7 +54,7 @@ int ScoreKeeper::checkWin() {
 		return 10; 
 	}
 }
-
+//calculates best melds and deadwood
 int ScoreKeeper::scoreHand(vector<Card> h) {
 
 	int deadwoodOne = 0;
@@ -56,6 +64,8 @@ int ScoreKeeper::scoreHand(vector<Card> h) {
 	vector<Card> d;
 	d = h;
 	vector<int> vals;
+	int deadwoodSizeOne;
+	int deadwoodSizeTwo;
 
 	sort(h.begin(), h.end());
 	sort(d.begin(), d.end());	
@@ -118,6 +128,7 @@ int ScoreKeeper::scoreHand(vector<Card> h) {
 		vals.clear();	
 	}
 
+	deadwoodSizeOne = h.size();
 
 	for(int y = 0; y < h.size(); y++) {
 		if (h[y].getNumber() > 10) {
@@ -127,7 +138,9 @@ int ScoreKeeper::scoreHand(vector<Card> h) {
 			deadwoodOne = deadwoodOne + h[y].getNumber();
 		}
 	}
-
+	
+	
+	
 	//************************************************************************
 
 	//runs
@@ -185,6 +198,8 @@ int ScoreKeeper::scoreHand(vector<Card> h) {
 
 		vals.clear();	
 	}
+	
+	deadwoodSizeTwo = h.size();
 
 	for(int y = 0; y < h.size(); y++) {
 		if (h[y].getNumber() > 10) {
@@ -196,9 +211,9 @@ int ScoreKeeper::scoreHand(vector<Card> h) {
 		
 	}
 
-	if (deadwoodOne > deadwoodTwo) { deadwood = deadwoodOne; melds = meldsOne;}
-	else if (deadwoodOne < deadwoodTwo) { deadwood = deadwoodTwo; melds = meldsTwo;}
-	else { deadwood = deadwoodOne; melds = meldsOne;}
+	if (deadwoodOne > deadwoodTwo) { deadwood = deadwoodOne; melds = meldsOne; deadwoodSize = deadwoodSizeOne;}
+	else if (deadwoodOne < deadwoodTwo) { deadwood = deadwoodTwo; melds = meldsTwo;deadwoodSize = deadwoodSizeTwo;}
+	else { deadwood = deadwoodOne; melds = meldsOne;deadwoodSize = deadwoodSizeOne;}
 
 }
 

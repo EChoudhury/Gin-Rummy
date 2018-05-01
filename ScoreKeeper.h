@@ -1,3 +1,12 @@
+/************************
+Erich Choudhury
+Thomas Daughtridge
+Grant Caskey
+ECGR 2104
+April 30, 2018
+ScoreKeeper.h
+************************/
+
 #ifndef SCOREKEEPER_H
 #define SCOREKEEPER_H
 
@@ -11,6 +20,7 @@ class ScoreKeeper {
 
 private:
 
+int deadwoodSize;
 int melds;
 int playerscore;
 int deadwood;

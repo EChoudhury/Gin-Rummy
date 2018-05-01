@@ -1,3 +1,12 @@
+/************************
+Erich Choudhury
+Thomas Daughtridge
+Grant Caskey
+ECGR 2104
+April 30, 2018
+GinRummy.cpp
+************************/
+
 #include "Card.h"
 #include "Dealing.h"
 #include "Gameplay.h"

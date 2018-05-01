@@ -1,3 +1,12 @@
+/************************
+Erich Choudhury
+Thomas Daughtridge
+Grant Caskey
+ECGR 2104
+April 30, 2018
+Gameplay.cpp
+************************/
+
 #include "Gameplay.h"
 #include "Dealing.h"
 #include "Card.h"
@@ -134,6 +143,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 	bool valid = false;
 	int choice;
 
+	//input prompts
 	string selectDrawSort = "Select from the draw pile (1) or discard pile (2)! Press (3) to sort! (1-3)\n>";
 	string selectDraw = "Select from the draw pile (1) or discard pile (2)!\n";
 	string selectKnock = "Continue to select a card to discard (1) or press (0) to knock! (0/1)\n";
@@ -142,6 +152,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 	displayDeck(discard);
 	displayBoard(player);
 	
+	//get first input
 	choice = input(valid, selectDrawSort, 3, 1);
 
 		//sort the player hand
@@ -162,9 +173,10 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 			pScore.getPlayerHand(player);
 			pScore.scoreHand(player);
 			cout <<"Your deadwood value is " << pScore.getDeadwood() << " and you have " << pScore.getMelds() << " melds." << endl;
-
+			//check for win
 			choice = pScore.checkWin();
 			
+			//check for knock and end game
 			if (choice == 6) {
 				choice = input(valid, selectKnock, 1, 0);
 				if (choice == 0) {
@@ -173,6 +185,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 				}
 			}
 
+			//check for gin or big gin and end game
 			if (choice == 5 || choice == 7) {
 				end = true;
 				goto loc;
@@ -181,6 +194,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 			//choose a card to discard
 			choice = input(valid, selectDiscard, 11, 1);
 	
+			//discard chosen card
 			choice -= 1;
 			Card c = player[choice];
 			discard.push(c);
@@ -217,7 +231,7 @@ void playerTurn(vector<Card>& player, stack<Card>& draw, stack<Card>& discard, b
 				goto loc;
 			}
 
-			//choose a care to discard
+			//choose a card to discard
 			choice = input(valid, selectDiscard, 11, 1);
 
 			choice -= 1;
@@ -237,6 +251,7 @@ void compTurn(vector<Card>& comp, stack<Card>& draw, stack<Card>& discard, bool&
 
 	int choice;
 	
+	//always choses 1 (Really Dumb)
 	choice = 1;
 
 	if (draw.size() == 0) {
@@ -252,17 +267,20 @@ void compTurn(vector<Card>& comp, stack<Card>& draw, stack<Card>& discard, bool&
 
 			choice = cScore.checkWin();
 			
+			//if knocks end game
 			if (choice == 6) {
 				end = true;
 				goto fin;
 			}
 
+			//if gin or big gin end game
 			if (choice == 5 || choice == 7) {
 				end = true;
 				goto fin;
 			}
 
-			choice = 1;
+			//discard last card
+			choice = 11;
 	
 			choice -= 1;
 			Card c = comp[choice];
@@ -271,6 +289,7 @@ void compTurn(vector<Card>& comp, stack<Card>& draw, stack<Card>& discard, bool&
 		}
 		
 		else {
+			//gives alternative if we would like to add in probability later
 			dealToHands(1, comp, discard);
 			cScore.getPlayerHand(comp);
 			cScore.scoreHand(comp);
@@ -298,24 +317,29 @@ void compTurn(vector<Card>& comp, stack<Card>& draw, stack<Card>& discard, bool&
 	cout << "My turn! Thinking..." << endl;	
 }
 
+//pass or take from discard on first round
 void roundStart(vector<Card>& comp, vector<Card>& player, stack<Card>& discard) {
 		
 		bool valid = false;
 
+		//string input queries
 		string discPass = "Would you like to draw from discard (1) or pass (2)? (1/2)\n>";
 		string selectDiscard = "Select card to discard! (1-11)\n>";
 
 		displayDeck(discard);
 		displayBoard(player);
 
+		//ask for input
 		int choice = input(valid, discPass, 2, 1);
 			
+			//take card from discard
 			if (choice == 1) {
 				system("clear");
 				dealToHands(1, player, discard);
 				displayBoard(player);
 				choice = input(valid, selectDiscard, 11, 1);
 	
+				//discard chosen card
 				choice -= 1;
 				Card c = player[choice];
 				discard.push(c);
@@ -327,10 +351,12 @@ void roundStart(vector<Card>& comp, vector<Card>& player, stack<Card>& discard) 
 			}
 			
 			else {
+				//pass
 				cout << "You passed. My turn!" << endl;
 				
 			}
-			
+		
+		//computer takes diiscard and discards first card
 		dealToHands(1, comp, discard);
 		choice = 1;
 
@@ -342,20 +368,21 @@ void roundStart(vector<Card>& comp, vector<Card>& player, stack<Card>& discard) 
 
 void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win) {
 	
-	//gin
+	//gin: 
 	if (win == 5) {
+		//add 25 + losing players deadwood
 		cout << "GOING GIN! +25!" << endl;
-		wScore.updateScore(( lScore.getDeadwood() - wScore.getDeadwood()) + 25);
+		wScore.updateScore(( lScore.getDeadwood() + 25);
 	}
 
-	//knock
+	//knock:
 	else if (win == 6) {
-
+		//get difference in score
 		if (wScore.getDeadwood() < lScore.getDeadwood()) {
 			cout << "Knocked!" << endl;
 			wScore.updateScore((lScore.getDeadwood() - wScore.getDeadwood()));
 		}
-
+		//undercut, get differencec and add 25 to winner
 		else if (wScore.getDeadwood() >= lScore.getDeadwood()) {
 			cout << "UNDERCUT! Opponent gets 25 points!" << endl;
 			lScore.updateScore(wScore.getDeadwood() - lScore.getDeadwood() + 25);
@@ -364,11 +391,13 @@ void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win) {
 
 	//big gin
 	else if (win == 7) {
+		//add 31 plus loser's score
 		cout << "BIG GIN! +31!" << endl;
-		wScore.updateScore(( lScore.getDeadwood() - wScore.getDeadwood()) + 31);
+		wScore.updateScore(( lScore.getDeadwood() + 31);
 	}
 }
 
+//display instructions
 void howToPlay() {
 
 cout << "How to play:" << endl << endl;

@@ -1,3 +1,11 @@
+/************************
+Erich Choudhury
+Thomas Daughtridge
+Grant Caskey
+ECGR 2104
+April 30, 2018
+Dealing.cpp
+************************/
 
 #include "Dealing.h"
 #include <iostream>
