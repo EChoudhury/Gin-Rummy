@@ -372,7 +372,7 @@ void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win) {
 	if (win == 5) {
 		//add 25 + losing players deadwood
 		cout << "GOING GIN! +25!" << endl;
-		wScore.updateScore(( lScore.getDeadwood() + 25);
+		wScore.updateScore( lScore.getDeadwood() + 25);
 	}
 
 	//knock:
@@ -393,7 +393,7 @@ void roundScoring(ScoreKeeper& wScore, ScoreKeeper& lScore, int win) {
 	else if (win == 7) {
 		//add 31 plus loser's score
 		cout << "BIG GIN! +31!" << endl;
-		wScore.updateScore(( lScore.getDeadwood() + 31);
+		wScore.updateScore( lScore.getDeadwood() + 31);
 	}
 }
 
